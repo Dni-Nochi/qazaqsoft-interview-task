@@ -1,5 +1,3 @@
-const { json } = require('express');
-
 // ========== Константы и ключи хранилища ==========
 const STORAGE_KEYS = {
   STATE: 'quiz.state.v1',
@@ -27,19 +25,16 @@ class Question {
 class StorageService {
   static saveState(state) {
     localStorage.setItem(STORAGE_KEYS.STATE, JSON.stringify(state));
-    throw new Error('Not implemented: StorageService.saveState');
   }
 
   static loadState() {
     const raw = localStorage.getItem(STORAGE_KEYS.STATE);
     if (!raw) return null;
     return JSON.parse(raw);
-    throw new Error('Not implemented: StorageService.loadState');
   }
 
   static clear() {
     localStorage.removeItem(STORAGE_KEYS.STATE);
-    throw new Error('Not implemented: StorageService.clear');
   }
 }
 
@@ -68,29 +63,29 @@ class QuizEngine {
 
   /** @param {number} index */
   goTo(index) {
-    // TODO: валидировать границы и сменить текущий индекс
-    throw new Error('Not implemented: QuizEngine.goTo');
+    console.log(index);
+    if (index >= 0 && index < this.questions.length) {
+      this.currentIndex = index;
+    }
   }
 
   next() {
-    // TODO: перейти к следующему вопросу, если возможно
-    throw new Error('Not implemented: QuizEngine.next');
+    this.goTo(this.currentIndex + 1);
   }
 
   prev() {
-    // TODO: перейти к предыдущему вопросу, если возможно
-    throw new Error('Not implemented: QuizEngine.prev');
+    this.goTo(this.currentIndex - 1);
   }
 
   /** @param {number} optionIndex */
   select(optionIndex) {
-    // TODO: сохранить выбор пользователя для текущего вопроса
-    throw new Error('Not implemented: QuizEngine.select');
+    const id = this.currentIndex.id;
+    this.answers[id] = optionIndex;
   }
 
   getSelectedIndex() {
-    // TODO: вернуть выбранный индекс для текущего вопроса (или undefined)
-    throw new Error('Not implemented: QuizEngine.getSelectedIndex');
+    const id = this.currentIndex.id;
+    return this.answers[id];
   }
 
   tick() {
