@@ -79,36 +79,58 @@ class QuizEngine {
 
   /** @param {number} optionIndex */
   select(optionIndex) {
-    const id = this.currentIndex.id;
+    const id = this.currentQuestion.id;
     this.answers[id] = optionIndex;
   }
 
   getSelectedIndex() {
-    const id = this.currentIndex.id;
+    const id = this.currentQuestion.id;
     return this.answers[id];
   }
 
   tick() {
-    // TODO: декремент таймера; если 0 — завершить тест
-    throw new Error('Not implemented: QuizEngine.tick');
+    if (this.remainingSec > 0) {
+      this.remainingSec--;
+    }
+    if (this.remainingSec === 0) {
+      this.finish();
+    }
   }
 
   finish() {
-    // TODO: зафиксировать завершение и вернуть сводку результата
-    // return { correct: number, total: number, percent: number, passed: boolean }
-    throw new Error('Not implemented: QuizEngine.finish');
+    this.isFinished = true;
+
+    const correct = this.questions.filter(
+      (q) => this.answers[q.id] === q.correctIndex,
+    ).length;
+
+    const total = this.questions.length;
+    const percent = correct / total;
+    const passed = percent >= this.passThreshold;
+
+    return { correct, total, percent, passed };
   }
 
   /** Восстановление/выгрузка состояния для localStorage */
   toState() {
     // TODO: вернуть сериализуемый снимок состояния
-    throw new Error('Not implemented: QuizEngine.toState');
+    return {
+      currentIndex: this.currentIndex,
+      answers: this.answers,
+      remainingSec: this.remainingSec,
+      isFinished: this.isFinished,
+    };
   }
 
   /** @param {any} state */
   static fromState(quiz, state) {
     // TODO: создать двигатель на базе сохранённого состояния
-    throw new Error('Not implemented: QuizEngine.fromState');
+    const engine = new QuizEngine(quiz);
+    engine.currentIndex = state.currentIndex;
+    engine.answers = state.answers;
+    engine.remainingSec = state.remainingSec;
+    engine.isFinished = state.isFinished;
+    return engine;
   }
 }
 
